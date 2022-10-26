@@ -1,0 +1,11 @@
+Add math 
+
+int main() {
+    // jfj
+    int a = 1, b = -2, c = -24
+    float D = b*b - 4ac  // wow
+    print("First: ", ((-1)*b + math.sqrt(D))/2*a), "\$")
+    print("Second: ", (((-1)*b - math.sqrt(D))/2*a), "\n")
+    return 0
+}
+
