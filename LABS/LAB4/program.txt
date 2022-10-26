@@ -1,0 +1,17 @@
+
+int main() {
+    int isPrime=9039
+// test program
+    for(int i=2; i <= math.sqrt(isPrime)+1; i++) {
+        if(isPrime%i == 0) {
+           print$("Not prime:(")
+            return 0
+        } 
+    } 
+
+    print("Prime number!", "\n")
+
+    return 0
+} 
+
+
