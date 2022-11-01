@@ -34,6 +34,7 @@ constantas = HashTable()
 errors = []
 backslash  = []
 comments = []
+strings = []
 inx = 0
 cnx = 0
 lepe = 0
@@ -55,8 +56,8 @@ for line in input_program:
                 if(find_string_const1):
                     find_string_const1 = False
                     temp_str += l
-                    temp_arr.append(temp_str)
-                    line = line.replace(temp_str, '')
+                    strings.append(temp_str)
+                    line = line.replace(temp_str, '~'*len(temp_str))
                     temp_str = ''
                 elif(find_string_const2 == False):
                     find_string_const1 = True
@@ -64,8 +65,8 @@ for line in input_program:
                 if(find_string_const2):
                     find_string_const2 = False
                     temp_str += l
-                    temp_arr.append(temp_str)
-                    line = line.replace(temp_str, '')
+                    strings.append(temp_str)
+                    line = line.replace(temp_str, '~'*len(temp_str))
                     temp_str = ''
                 elif(find_string_const1 == False):
                     find_string_const2 = True
@@ -79,13 +80,29 @@ for line in input_program:
     for word in list(words): 
         str = ""
         d = ''
+        cnt = 0 
+        isStr = False
 
         for w in word: 
+ 
+            if(w == '~'):
+                cnt += 1 
+                isStr = True
+                continue
+
+            if(isStr):
+                if(cnt == len(strings[0])):
+                    # print("yes", strings[0])
+                    temp_arr.append(strings[0])
+                    strings.pop()
+                    cnt = 0
+                    isStr = False 
         
             if (w in separators and w != '' ):
                 if(str != ''):
                     temp_arr.append(str)
                 temp_arr.append(w)
+
                 w = ''
                 str = ""
             
@@ -99,6 +116,8 @@ for line in input_program:
             str += w
             
         temp_arr.append(str)
+        # strings.append(str)
+
     
     # print(temp_arr)
     
