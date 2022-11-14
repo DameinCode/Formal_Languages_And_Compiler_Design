@@ -1,0 +1,5 @@
+states = p q 
+alphabet = a b c d e f g h i j k l m n o p q r s t u v w x y z 1 2 3 4 5 6 7 8 9 0 _ .
+transition = [(p, a) = q, (p, b) = q, (p, c) = q, (p, d) = q, (p, e) = q, (p, f) = q, (p, g) = q, (p, h) = q, (p, i) = q, (p, j) = q, (p, k) = q, (p, l) = q, (p, m) = q, (p, n) = q, (p, o) = q, (p, p) = q, (p, q) = q, (p, r) = q, (p, s) = q, (p, t) = q, (p, u) = q, (p, v) = q, (p, w) = q, (p, x) = q, (p, y) = q, (p, z) = q, (q, a) = q, (q, b) = q, (q, c) = q, (q, d) = q, (q, e) = q, (q, f) = q, (q, g) = q, (q, h) = q, (q, i) = q, (q, j) = q, (q, k) = q, (q, l) = q, (q, m) = q, (q, n) = q, (q, o) = q, (q, p) = q, (q, q) = q, (q, r) = q, (q, s) = q, (q, t) = q, (q, u) = q, (q, v) = q, (q, w) = q, (q, x) = q, (q, y) = q, (q, z) = q, (q, 1) = q, (q, 2) = q, (q, 3) = q, (q, 4) = q, (q, 5) = q, (q, 6) = q, (q, 7) = q, (q, 8) = q, (q, 9) = q, (q, 0) = q, (q, _) = q, (q, .) = q]
+initial state = p
+final state = q
