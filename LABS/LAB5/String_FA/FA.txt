@@ -1,0 +1,5 @@
+states = p q k 
+alphabet = a b 
+transition = [(p, a) = p, (p, b) = q, (q, b) = p, (p, b) = k, (k, a) = k]
+initial state = p
+final state = k
