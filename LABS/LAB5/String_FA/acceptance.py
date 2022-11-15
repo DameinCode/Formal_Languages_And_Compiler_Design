@@ -12,19 +12,14 @@ import re
 def checkFunc(curState, inx):
     if(inx == len(strToCheck)):
         if(isFinal(curState)):
-            print("Accepted")
+            print("Accepted!")
             exit(0)
-        else:
-            print("Not accepted")
-            return 
-    labada = strToCheck[inx].lower()
-    if(strToCheck[inx] == " " or strToCheck[inx] == ')' or strToCheck[inx] == '('):
-        labada = "a"
-    if((curState, labada) in transition):
-        for i in transition[(curState, labada)]:
-            return checkFunc(i, inx+1)
+        return
+    if((curState, strToCheck[inx]) in transition):
+        for i in transition[(curState, strToCheck[inx])]:
+            checkFunc(i, inx+1)
     else: 
-        return False
+        return 
 
 def isFinal(state):
     for i in finals:
@@ -32,7 +27,7 @@ def isFinal(state):
             return True
     return False
 
-finiteAutomata = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/LAB5/String_FA/identifiers.txt", "r")
+finiteAutomata = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/LAB5/String_FA/FA.txt", "r")
 
 states = []
 alphabet = []
@@ -54,7 +49,7 @@ for line in finiteAutomata:
     else: 
         line = line[line.find("[")+1:-2]
         # _ . $ # ! % ^ & * - = / ~ ' " ` 
-        temp = re.findall("[a-zA-Z]|[0-9]|_|\.|\#+|\%|\$|\@|\!|\~|\+|\*|\^|\'|\"|\`|\-|\/|&", line)
+        temp = re.findall("[a-zA-Z]+", line)
         for i in range(0, len(temp), 3):
             if((temp[i], temp[i+1]) in transition):
                 transition[(temp[i], temp[i+1])].append(temp[i+2])
