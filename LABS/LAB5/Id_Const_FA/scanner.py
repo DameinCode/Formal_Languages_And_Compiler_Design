@@ -2,15 +2,37 @@ import re
 from hashTable import HashTable
 import pandas as pd
 
+programCode = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/lab4/program.txt", "r")
+tokens = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/LAB4/token.txt", "r")
 
 
-# Functions:
+code_arrayOfLine = []
+operators = {"+", "-", "%", "/", "*", "=", ">", "<", ">=", "<=", "==", "||", "&&"}
+separators = {";", "[", "]", "{", "}", "(", ")", ","} 
+dataTypes = {"int", "string", "float", "const", "char"}
+keywords = {"for", "if", "else", "Add", "return", "print", "while", "main", "array"}
+special_quote = {"t", "n", "\\", '"'}
+
+tokender = {}
+pif = []
+comments = []
+errors = []
+backslash = []
+
+identifiers = HashTable()
+constantas = HashTable()
+
+for line in tokens:
+    toks = re.split("\s", line)
+    if(toks):
+        tokender[toks[0]] = toks[1]
+
+
 def isFinal(state, finals):
     for i in finals:
         if(state == i):
             return True
     return False
-
 
 def checkFAID(curState, inx, strToCheck):
     if(inx == len(strToCheck)):
@@ -67,173 +89,116 @@ def FA_identifiers_Const(finiteAutomata):
                 transition[(temp[i], temp[i+1])] = [temp[i+2]]
     return states, alphabet, initial, finals, transition
 
+def get_codes_array():
 
-input_program = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/LAB4/program.txt", "r")
-tokens = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/LAB4/token.txt", "r")
+    for line in programCode:
+        if(line.find("//") != -1):
+            comments.append(line[line.find("//"):-1]) # adding comment to the comment list
+        line = line[:line.find("//")]
+        strtemp = ""
+        comingStr2 = False
+        comingStr1 = False
+        temp_arr = []
+        for i in range(0, len(line)): 
+            if(line[i] == '"' and comingStr1 == False and comingStr2 == False):
+                comingStr1 = True
+                if(strtemp != ''):
+                    temp_arr.append(strtemp)
+                strtemp = ""
+            elif(line[i] == '"' and comingStr1 == True): 
+                strtemp += line[i]
+                temp_arr.append(strtemp)
+                strtemp = ''
+                comingStr1 = False
+                continue
+            elif(line[i] == "'" and comingStr2 == False and comingStr1 == False):
+                comingStr2 = True
+                if(strtemp != ''):
+                    temp_arr.append(strtemp)
+                strtemp = ""
+            elif(line[i] == "'" and comingStr2 == True): 
+                strtemp += line[i]
+                temp_arr.append(strtemp)
+                comingStr2 = False
+                strtemp = ""
+                continue
+            if((line[i] in separators or line[i] in operators) and comingStr2 == False and comingStr1 == False):
+                if(strtemp != '' and strtemp != " "):
+                    temp_arr.append(strtemp)
+                temp_arr.append(line[i])
+                strtemp = ""
+                continue
 
+            if((line[i] == " " or i == len(line)-1) and comingStr2 == False and comingStr1 == False):
+                if(strtemp != '' and strtemp != " "):
+                    if(line[i] != " "):
+                        temp_arr.append(strtemp+line[i])
+                    else:
+                        temp_arr.append(strtemp)
+                elif(line[i] != " "):
+                    temp_arr.append(strtemp+line[i])
+                strtemp = ""
+                continue
+            strtemp += line[i]
 
-dataTypes = {"int", "string", "float", "const", "char"}
-keywords = {"for", "if", "else", "Add", "return", "print", "while", "main", "array"}
-operators = {"+", "-", "%", "/", "*", "=", ">", "<", ">=", "<=", "==", "||", "&&"}
-separators = {";", "[", "]", "{", "}", "(", ")", ","}
-letters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"
-digits = "1234567890"
-special_quote = {"t", "n", "\\", '"'}
+        if(len(temp_arr) != 0):
+            code_arrayOfLine.append(temp_arr)
 
-tokender = {}
+def main_operations():
+    inx = 0
+    cnx = 0
+    for line in code_arrayOfLine:
+        isOkInit = False
+        for word in line:
+            if(word in tokender):
+                pif.append({word: tokender[word], 'ans': "-1"})
+            if ((word in dataTypes) or word == "Add"):
+                isOkInit = True
+                continue
+            if (word in keywords):
+                continue
+            if(word in operators):
+                isOkInit = False
+                continue
+            if(word in separators):
+                continue
+            checkIdentifier = checkFAID(initial_id, 0, word)
+            if(checkIdentifier == True and isOkInit == True and word != '' or word.find(".") != -1): #check if name is acceptable for identifier
+                if (identifiers.insert(word, inx)): 
+                    pif.append({word: 2, 'ans': inx})
+                    inx += 1
+            elif(identifiers.find(word) and word != ''): # Identifier already in a hash table we just add it to pif 
+                pif.append({word: 2, 'ans': identifiers.get_value(word)})
+            elif(checkIdentifier == True and isOkInit == False and word != ''): # Name acceptable for an identifier but not correct because data type wasn;t initialized (syntax error)
+                errors.append([word, 'What is that, a variable? You seemed not initialized it. Line:', code_arrayOfLine.index(line)])
+            elif(isOkInit and checkIdentifier == False and len(word) != 1): # Name is not acceptable, but data type was mentioned. Then we do not add it to identifier hash table because name is not acceptable 
+                errors.append([word, 'Wrong name for variable, what is that? Line:', code_arrayOfLine.index(line)])
+            else:
+                if(len(word) >= 2):
+                    if(word[1] == "\\"[0]):
+                        if(word[len(word)-2] in special_quote and len(word) == 4):
+                            backslash.append(word)
+                            continue
+                        else:
+                            errors.append([word, "Backslash error. Line:", code_arrayOfLine.index(line)])
 
-for line in tokens:
-    toks = re.split("\s", line)
-    if(toks):
-        tokender[toks[0]] = toks[1]
-
-pif = []
-
-keywords1 = {} 
-operators1 = {} 
-separators1 = {} 
-identifiers = HashTable()
-constantas = HashTable()
-errors = []
-backslash  = []
-comments = []
-strings = []
-inx = 0
-cnx = 0
-lepe = 0
-
+                if(checkFAConst(initial_const, 0, word)):
+                    if (constantas.find(word) == False): 
+                        constantas.insert(word, cnx)
+                        pif.append({word: 3, 'ans': cnx})
+                        cnx += 1
+                    else:
+                        pif.append({word: 3, 'ans': constantas.get_value(word)})
+                else:
+                    errors.append([word, "Error appeared. Non clear word-element. Line:", code_arrayOfLine.index(line)])
+                
+            
 states_id, alphabet_id, initial_id, finals_id, transition_id = FA_identifiers_Const("id")
 states_const, alphabet_const, initial_const, finals_const, transition_const = FA_identifiers_Const("const")
-
-for line in input_program:
-    lepe += 1
-    temp = False
-    isConst = False
-    temp_arr = []
-    find_string_const1 = False
-    find_string_const2 = False
-    temp_str = ""
-    if(line.find("//") != -1):
-        comments.append(line[line.find("//"):-1]) # adding comment to the comment list
-    line = line[:line.find("//")]  # comment finding 
-   
-    words = re.split("\s", line) 
-    words = filter(lambda x: x != "", words) # getting lines of program code as a list 
+get_codes_array()
+main_operations()
 
 
-    stringChecking = False
-    checkStr = ''
-    checkIdentifier = False
-    for word in list(words): 
-        str = ""
-        d = ''
-        cnt = 0 
-        for w in word: 
-            if (w in separators and w != '' and stringChecking == False):
-                if(str != ''):
-                    temp_arr.append(str)
-                temp_arr.append(w)
-
-                w = ''
-                str = ""
-            
-            if (w in operators and w != '' and stringChecking == False):
-                if(str != ''):
-                    temp_arr.append(str)
-                temp_arr.append(w)
-
-                w = ''
-                str = ""
-
-            str += w
-        temp_arr.append(str)
-
-    # print(temp_arr)    
-    for word in temp_arr:
-        if (word == ''):
-            continue
-        if(word in tokender):
-            pif.append({word: tokender[word], 'ans': "-1"})
-        if (word in dataTypes and stringChecking == False):
-            if(word in keywords1):
-                keywords1[word] += 1
-            else:     
-                keywords1[word] = 1
-            temp = True 
-            continue
-        if (word in keywords and stringChecking == False):
-            if(word in keywords1):
-                keywords1[word] += 1
-            else:     
-                keywords1[word] = 1
-            continue
-
-        if(word in separators and stringChecking == False):
-            if(word in separators1):
-                separators1[word] += 1
-            else:
-                separators1[word] = 1
-            continue
-
-        if(word in operators and stringChecking == False):
-            isConst = True
-            if(word in operators1):
-                operators1[word] += 1
-            else:
-                operators1[word] = 1
-            continue
-
-        
-        checkIdentifier = checkFAID(initial_id, 0, word) # check for identifier name if acceptable or not by FA
-        if(checkIdentifier == True and temp == True and word != ''): #check if name is acceptable for identifier
-            if (identifiers.insert(word, inx)): 
-                pif.append({word: 2, 'ans': inx})
-                inx += 1
-        elif(identifiers.find(word) and word != '' and stringChecking == False): 
-            pif.append({word: 2, 'ans': identifiers.get_value(word)})
-        elif(checkIdentifier == True and temp == False and word != '' and stringChecking == False):
-            errors.append([word, 'What is that, a variable? Line', lepe])
-        elif(temp and checkIdentifier == False and len(word) != 1 and isConst == False): # 
-            errors.append([word, 'Wrong name for variable, what is that Line', lepe])
-        
-        # elif(checkIdentifier == False): 
-            # maybe it is a const? Check for acceptance by FA
-        else:
-            if(checkFAConst(initial_const, 0, word) and stringChecking == False):
-                if (constantas.find(word) == False): 
-                    constantas.insert(word, cnx)
-                    pif.append({word: 3, 'ans': cnx})
-                    cnx += 1
-                else:
-                    pif.append({word: 3, 'ans': constantas.get_value(word)})
-        #       
-            if(len(word) >= 2):
-                if(word[1] == "\\"[0] and stringChecking == False):
-                    if(word[len(word)-2] in special_quote and len(word) == 4):
-                        backslash.append(word)
-                    else:
-                        errors.append([word, "Backslash error Line", lepe])
-            if(word != '' and constantas.find(word) == False):
-                checkStr = checkStr + word + " "
-                stringChecking = True
-                if(constantas.find(checkStr[:-1]) == True):
-                    pif.append({checkStr[:-1]: 3, 'ans': constantas.get_value(checkStr[:-1])})
-                    checkStr = ''
-                    stringChecking = False
-                if(checkFAConst(initial_const, 0, checkStr[:-1])): 
-                    constantas.insert(checkStr[:-1], cnx)
-                    pif.append({checkStr: 3, 'ans': cnx})
-                    cnx += 1
-                    checkStr = ''
-                    stringChecking = False
-                else: 
-                    continue
-            else:
-                if(checkStr != ''):
-                    errors.append([checkStr, "Line",  lepe])
-
-
-indexx = []
 
 iden = identifiers.get_nodes()
 con = constantas.get_nodes()
