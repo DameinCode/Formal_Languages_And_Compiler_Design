@@ -3,7 +3,7 @@ from hashTable import HashTable
 import pandas as pd
 
 programCode = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/lab5/Id_Const_FA/program.txt", "r")
-tokens = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/lab5/Id_Const_FA/token.txt", "r")
+tokens = open("C:/Users/user/Documents/Semester#7/FLACT/LABS/lab4/token.txt", "r")
 
 
 code_arrayOfLine = []
