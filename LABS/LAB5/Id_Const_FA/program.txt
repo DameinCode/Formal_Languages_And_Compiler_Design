@@ -1,0 +1,18 @@
+Add math
+
+int main() {
+    int isPrime, opa = 9039, 15
+// test program
+
+    for(int i=2; i <= math.sqrt(isPrime)+1; i++) {
+        if(isPrime%i == 0) {
+           print(' "Not"           (())         prime:' )
+            return 0$fghjkls
+        } 
+    } 
+
+    print("Prime number!")
+    print("Prime number!", "\n")
+
+    return 0
+} 
