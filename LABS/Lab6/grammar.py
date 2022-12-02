@@ -31,25 +31,6 @@ for i, line in enumerate(grammar): #index and line
                         temp_temp.append(smth.strip())
                 temp_rules.append(temp_temp)
         productions.append(production.Production(temp[0], temp_rules))
-
-def productionForGivenNonterminal(nonterminal):
-    temp_productions = deque() # Productions for a given nonterminal
-    for production in productions:
-        if (production.getLeftHandSide().strip() == nonterminal): 
-            temp_productions.append(production)
-    return temp_productions
-
-def gettingTerminalsOfNonterminal(nonterminal):
-    temp_list_of_rules = []
-    if (nonterminal in productions_with_terminals):
-        return productions_with_terminals[nonterminal]
-    for production in productionForGivenNonterminal(nonterminal):
-        for rule in production.getRightHandSide():
-            if(rule[0] in terminals): 
-                temp_list_of_rules.append(rule[0])
-            elif(rule[0] in nonterminals): 
-                temp_list_of_rules.extend(gettingTerminalsOfNonterminal(rule[0]))
-    return temp_list_of_rules
     
 
 def isCFG(): #checking grammar 
@@ -64,7 +45,9 @@ def isCFG(): #checking grammar
     
     for production in productions:
         right_hand_side = production.getRightHandSide()
-
+        left_hand_side = production.getLeftHandSide()
+        if (left_hand_side in nonterminals == False):
+            return False
         for rules in right_hand_side: 
             for rule in rules:
                 if(rule in nonterminals or rule in terminals or rule == "epsilon"):
