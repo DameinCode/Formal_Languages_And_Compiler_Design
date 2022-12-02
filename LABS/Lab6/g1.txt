@@ -1,0 +1,7 @@
+S A B C
+( ) + *
+S
+S -> A B
+A -> ( S )
+B -> + S | epsilon
+C -> * A | epsilon
