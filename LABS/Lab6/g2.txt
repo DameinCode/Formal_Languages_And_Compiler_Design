@@ -1,0 +1,26 @@
+main operation equalTo type id_or_const expression operationOrSign declare_rule declareVars statement if_statement while_statement for_statement assignment_statement user_inter_statment statements for_relation variableExist do_smth else_statement condition relation else_if_statement
+; int float boolean char string input print return Add = + ++ -- - * / % ( ) { } " ' || && == != < > <= >= if else while for identifier constant True False
+main
+main -> declareVars statements return constant ;
+declareVars -> declare_rule declareVars | epsilon
+declare_rule -> type identifier equalTo ;
+equalTo -> = expression | True | False | epsilon
+expression -> id_or_const operationOrSign 
+id_or_const -> identifier | constant
+type -> int | float | char | string | boolean
+operationOrSign -> operation expression | epsilon
+operation -> + | - | * | % | / 
+statements -> statement statements | epsilon
+statement -> if_statement | while_statement | for_statement | assignment_statement | user_inter_statment 
+if_statement -> if ( condition ) { statements ; } else_if_statement else_statement
+else_if_statement -> else if ( condition ) { statements ; } else_if_statement | epsilon 
+else_statement -> else { statements ; } | epsilon
+while_statement -> while ( condition ) { statements ; }
+condition -> expression relation expression
+relation -> == | != | < | > | <= | >= 
+for_statement -> for ( variableExist ; identifier for_relation constant ; identifier do_smth ) { statements ; }
+variableExist -> declare_rule | identifier 
+for_relation -> > | < | >= | <= 
+do_smth -> + constant | - constant | ++ | -- 
+assignment_statement -> identifier = expression ;
+user_inter_statment -> input ( id_or_const ) ; | print ( id_or_const ) ;
