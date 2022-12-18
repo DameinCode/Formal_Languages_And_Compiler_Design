@@ -1,0 +1,30 @@
+mainFunc what TEMP ARGS operation PRINT equalTo type id_or_const expression operationOrSign declare_rule declareVars statement if_statement while_statement for_statement assignment_statement user_inter_statment statements for_relation variableExist do_smth else_statement condition relation else_if_statement
+int main args float boolean char string input print return Add = + ++ -- - * / % ( ) { } " ' || && == != < > <= >= if else while for identifier constant True False ; ,
+mainFunc
+mainFunc -> int main ( ARGS ) { declareVars statements return constant }
+ARGS -> args | epsilon
+declareVars -> declare_rule declareVars | epsilon
+declare_rule -> type identifier equalTo
+type -> int | float | char | string | boolean
+equalTo -> = what | epsilon
+what -> expression | True | False
+expression -> id_or_const operationOrSign
+id_or_const -> identifier | constant
+operationOrSign -> operation expression | epsilon
+operation -> + | - | * | % | /
+statements -> statement statements | epsilon
+statement -> if_statement | while_statement | for_statement | assignment_statement | user_inter_statment
+if_statement -> if ( condition ) { statements } else_if_statement else_statement
+else_if_statement -> else if ( condition ) { statements } else_if_statement | epsilon
+else_statement -> else { statements } | epsilon
+while_statement -> while ( condition ) { statements }
+condition -> expression relation expression
+relation -> == | != | < | > | <= | >=
+for_statement -> for ( variableExist ; identifier for_relation expression ; id_or_const do_smth ) { statements }
+variableExist -> declare_rule | identifier
+for_relation -> > | < | >= | <=
+do_smth -> + constant | - constant | ++ | --
+assignment_statement -> identifier = expression
+user_inter_statment -> input ( constant ) | PRINT
+PRINT -> print ( id_or_const TEMP )
+TEMP -> , id_or_const TEMP | epsilon
