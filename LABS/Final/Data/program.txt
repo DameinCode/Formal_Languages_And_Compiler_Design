@@ -1,0 +1,24 @@
+int main() {
+    int isPrime
+    int opa = 9039
+    int right = 15
+    
+    // test program
+
+    for(int i=2; i <= isPrime+1; i++) {
+        if(isPrime%i == 0) {
+            print(' "Not"           (())         prime:' )
+        } 
+    } 
+
+    //while()
+    print("cool", 2, "this is string")
+    for(int i = 0; i < 2; i++) {
+        print("cool")
+    }
+
+    print("Prime number!")
+    print("Prime number!", "\n")
+
+    return 0
+} 
